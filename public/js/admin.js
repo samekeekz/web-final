@@ -59,3 +59,46 @@ async function renderPlayers() {
 
 // Call the renderPlayers function when the page loads
 window.onload = renderPlayers;
+
+
+const carousels = document.querySelectorAll('.carousel');
+
+carousels.forEach(carousel => {
+    const images = carousel.querySelectorAll('img');
+    let currentIndex = 0;
+
+    const showImage = (index) => {
+        images.forEach((image, i) => {
+            if (i === index) {
+                image.style.display = 'block';
+            } else {
+                image.style.display = 'none';
+            }
+        });
+    };
+
+    const nextImage = () => {
+        currentIndex = (currentIndex + 1) % images.length;
+        showImage(currentIndex);
+    };
+
+    const prevImage = () => {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        showImage(currentIndex);
+    };
+
+    // Initial display
+    showImage(currentIndex);
+
+    // Event listeners for next and previous buttons
+    const nextButton = document.createElement('button');
+    nextButton.textContent = 'Next';
+    nextButton.addEventListener('click', nextImage);
+
+    const prevButton = document.createElement('button');
+    prevButton.textContent = 'Previous';
+    prevButton.addEventListener('click', prevImage);
+
+    carousel.appendChild(prevButton);
+    carousel.appendChild(nextButton);
+});

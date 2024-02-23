@@ -8,67 +8,25 @@
       rel="stylesheet"
     />
     <title>Admin Page</title>
-  </head>
-
-  <body>
-    <div class="navbar">
-      <ul>
-        <li>
-          <a href="/home">Main</a>
-        </li>
-        <li>
-          <a href="/">History</a>
-        </li>
-        <% if (isAdmin) { %>
-        <li><a href="/adminPage">Users</a></li>
-        <% } %>
-        <li>
-          <a href="/">Exit</a>
-        </li>
-      </ul>
-    </div>
-
-    <h1>List of NBA Players</h1>
-    <form id="addItemForm">
-      <input type="text" id="name" placeholder="Name" required />
-      <input type="text" id="description" placeholder="Description" required />
-      <input type="text" id="picture1" placeholder="Picture 1 URL" required />
-      <input type="text" id="picture2" placeholder="Picture 2 URL" />
-      <input type="text" id="picture3" placeholder="Picture 3 URL" />
-      <button type="submit">Add Player</button>
-    </form>
-    <ul>
-      <% players.forEach(function(player) { %>
-      <li>
-        <h2><%= player.name %></h2>
-        <p><%= player.description %></p>
-        <div class="carousel">
-          <% player.pictures.forEach(function(picture) { %>
-          <img src="<%= picture %>" alt="Player Image" />
-          <% }); %>
-        </div>
-        <p>Created At: <%= player.createdAt %></p>
-        <p>Updated At: <%= player.updatedAt %></p>
-        <button class="editButton">Edit</button>
-        <button class="deleteButton">Delete</button>
-      </li>
-      <% }); %>
-    </ul>
-
-    <footer class="footer">
-      <h3>Samat SE-2026</h3>
-    </footer>
-
     <style>
+      /* CSS styles for the admin page */
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+      }
+
       .navbar {
+        background-color: #333;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+        z-index: 1000;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        background-color: #333;
-        padding: 10px 0;
-        text-align: center;
-        z-index: 1000;
       }
 
       .navbar ul {
@@ -103,16 +61,18 @@
         color: white;
       }
 
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
+      .container {
+        max-width: 800px;
+        margin: 80px auto 20px;
         padding: 20px;
-        background-color: #f0f0f0;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       h1 {
-        margin-bottom: 20px;
         text-align: center;
+        margin-bottom: 20px;
       }
 
       form {
@@ -135,6 +95,11 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #0056b3;
       }
 
       ul {
@@ -142,26 +107,32 @@
         padding: 0;
       }
 
-      li {
-        background-color: #fff;
+      .player-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f9f9f9;
         margin-bottom: 20px;
         padding: 20px;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
-      h2 {
-        margin-bottom: 10px;
+      .player-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
       }
 
-      p {
-        margin-bottom: 15px;
+      .player-details {
+        flex: 1;
+        margin-right: 20px;
       }
 
       .carousel {
         display: flex;
-        justify-content: space-between;
-        overflow-x: scroll;
+        overflow-x: auto;
         margin-bottom: 15px;
       }
 
@@ -170,6 +141,10 @@
         height: auto;
         border-radius: 5px;
         margin-right: 10px;
+      }
+
+      .button-container {
+        text-align: right;
       }
 
       button.editButton,
@@ -196,8 +171,81 @@
       button.deleteButton:hover {
         opacity: 0.8;
       }
-    </style>
 
-    <script src="../public/js/admin.js"></script>
+      .list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+      }
+      .btns {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <ul>
+        <li><a href="/home">Main</a></li>
+        <li><a href="/">History</a></li>
+        <% if (isAdmin) { %>
+        <li><a href="/adminPage">Users</a></li>
+        <% } %>
+        <li><a href="/">Exit</a></li>
+      </ul>
+    </div>
+
+    <div class="container">
+      <h1>List of NBA Players</h1>
+      <div class="admin-features">
+        <!-- Add admin features here -->
+        <form id="addItemForm">
+          <input type="text" id="name" placeholder="Name" required />
+          <input
+            type="text"
+            id="description"
+            placeholder="Description"
+            required
+          />
+          <input
+            type="text"
+            id="picture1"
+            placeholder="Picture 1 URL"
+            required
+          />
+          <input type="text" id="picture2" placeholder="Picture 2 URL" />
+          <input type="text" id="picture3" placeholder="Picture 3 URL" />
+          <button type="submit">Add Player</button>
+        </form>
+      </div>
+      <div class="player-list">
+        <ul class="list">
+          <% players.forEach(function(player) { %>
+          <div class="player-card">
+            <h2><%= player.firstName %></h2>
+            <p><%= player.position %></p>
+            <div class="carousel">
+              <% player.pictures.forEach(function(picture) { %>
+              <img
+                src="<%= picture %>"
+                alt="Player Image"
+                class="carousel-image"
+              />
+              <% }); %>
+            </div>
+            <div class="btns">
+              <button class="editButton">Edit</button>
+              <button class="deleteButton">Delete</button>
+            </div>
+          </div>
+          <% }); %>
+        </ul>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <h3>Samat SE-2026</h3>
+    </footer>
   </body>
 </html>

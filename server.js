@@ -141,9 +141,10 @@ app.get("/home", async (req, res) => {
 });
 
 app.get("/admin/players", async (req, res) => {
+    const { isAdmin } = req.session;
     try {
         const players = await Player.find().exec();
-        res.render("adminPage", { players }); // Render admin.ejs and pass players data
+        res.render("adminPage", { players, isAdmin }); // Render admin.ejs and pass players data
     } catch (error) {
         console.error("Error fetching players:", error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -151,6 +152,7 @@ app.get("/admin/players", async (req, res) => {
 });
 
 app.post("/admin/add", async (req, res) => {
+
     try {
         const { firstName, lastName, position, team, country, pictures } = req.body;
         const player = new Player({
