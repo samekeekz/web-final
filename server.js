@@ -77,14 +77,14 @@ app.post("/login", async (req, res) => {
             return res.status(200).json({
                 success: true,
                 username: user.name,
-                redirectUrl: "/adminPage", // ~ Need to do something here
+                redirectUrl: "/adminPage",
             });
         }
 
         res.status(200).json({
             success: true,
             username: user.name,
-            redirectUrl: "/home", // ~ Need to do something here
+            redirectUrl: "/home",
         });
     } catch (error) {
         console.error(error);
@@ -140,7 +140,7 @@ app.get("/home", async (req, res) => {
     res.render("home", { isAdmin });
 });
 
-app.get("/admin/players", async (req, res) => {
+app.get("/adminPage", async (req, res) => {
     const { isAdmin } = req.session;
     try {
         const players = await Player.find().exec();
@@ -151,27 +151,51 @@ app.get("/admin/players", async (req, res) => {
     }
 });
 
+app.get("/admin/players", async (req, res) => {
+    const { isAdmin } = req.session;
+    try {
+        const players = await Player.find().exec();
+        res.render("adminPage", { players, isAdmin }); // Render admin.ejs and pass players data
+    } catch (error) {
+        console.error("Error fetching players:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+// ~ Need to implement the carousel for the images
+
+// app.post("/admin/add", async (req, res) => {
+
+//     try {
+//         const { firstName, lastName, team, picture1, picture2, picture3 } = req.body;
+//         await Player.create({
+//             firstName,
+//             lastName,
+//             team,
+//             pictures: [picture1, picture2, picture3],
+//         });
+//         res.redirect("/admin/players");
+//     } catch (error) {
+//         console.error("Error adding item:", error);
+//         res.status(500).send("Internal Server Error");
+//     }
+// });
+
 app.post("/admin/add", async (req, res) => {
 
     try {
-        const { firstName, lastName, position, team, country, pictures } = req.body;
-        const player = new Player({
+        const { firstName, lastName, team, picture1 } = req.body;
+        await Player.create({
             firstName,
             lastName,
-            position,
             team,
-            country,
-            pictures,
+            pictures: [picture1],
         });
-        await player.save();
-        res.status(201).json({ message: "Player added successfully" });
+        res.redirect("/admin/players");
     } catch (error) {
         console.error("Error adding item:", error);
         res.status(500).send("Internal Server Error");
     }
 });
-
-// ~ Need to do something here
 
 // app.post("/admin/edit", async (req, res) => {
 

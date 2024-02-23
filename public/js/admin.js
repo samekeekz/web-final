@@ -1,26 +1,26 @@
-document.getElementById('addItemForm').addEventListener('submit', async function (event) {
-    event.preventDefault();
-    const newItem = {
-        name: document.getElementById('name').value,
-        description: document.getElementById('description').value,
-        pictures: [
-            document.getElementById('picture1').value,
-            document.getElementById('picture2').value,
-            document.getElementById('picture3').value
-        ]
-    };
-    await addItem(newItem);
-});
+// document.getElementById('addItemForm').addEventListener('submit', async function (event) {
+//     event.preventDefault();
+//     const newItem = {
+//         name: document.getElementById('name').value,
+//         description: document.getElementById('description').value,
+//         pictures: [
+//             document.getElementById('picture1').value,
+//             document.getElementById('picture2').value,
+//             document.getElementById('picture3').value
+//         ]
+//     };
+//     await addItem(newItem);
+// });
 
-async function addItem(item) {
-    try {
-        const response = await axios.post('/items', item);
-        console.log(response.data); // Handle success response
-        // You can also update the UI here if needed
-    } catch (error) {
-        console.error('Error adding item:', error);
-    }
-}
+// async function addItem(item) {
+//     try {
+//         const response = await axios.post('/items', item);
+//         console.log(response.data); // Handle success response
+//         // You can also update the UI here if needed
+//     } catch (error) {
+//         console.error('Error adding item:', error);
+//     }
+// }
 
 // Function to fetch players data from the server
 async function fetchPlayers() {

@@ -20,29 +20,25 @@ const userSchema = mongoose.Schema(
 );
 
 
-const playerSchema = new mongoose.Schema({
-    firstName: {
-        type: String,
-        required: true
+const playerSchema = new mongoose.Schema(
+    {
+        firstName: {
+            type: String,
+            required: true
+        },
+        lastName: {
+            type: String,
+            required: true
+        },
+        team: {
+            fullName: String,
+        },
+        pictures: [String],
     },
-    lastName: {
-        type: String,
-        required: true
-    },
-    position: {
-        type: String,
-        required: true
-    },
-    country: String,
-    team: {
-        fullName: String,
-        abbreviation: String
-    },
-    pictures: [String],
-}, {
-    collection: "basketballPlayers",
-    timestamps: true,
-});
+    {
+        collection: "basketballPlayers",
+        timestamps: true,
+    });
 
 const Player = mongoose.model('Player', playerSchema);
 

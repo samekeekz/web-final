@@ -72,7 +72,11 @@
 
       h1 {
         text-align: center;
-        margin-bottom: 20px;
+        margin: 0;
+      }
+      h2 {
+        margin: 0;
+        font-size: 22px;
       }
 
       form {
@@ -137,10 +141,9 @@
       }
 
       .carousel img {
-        width: 150px;
+        width: 200px;
         height: auto;
-        border-radius: 5px;
-        margin-right: 10px;
+        border-radius: 10px;
       }
 
       .button-container {
@@ -197,34 +200,45 @@
     </div>
 
     <div class="container">
-      <h1>List of NBA Players</h1>
       <div class="admin-features">
-        <!-- Add admin features here -->
-        <form id="addItemForm">
-          <input type="text" id="name" placeholder="Name" required />
+        <h2>Add Player</h2>
+        <form id="addItemForm" action="/admin/add" method="POST">
           <input
             type="text"
-            id="description"
-            placeholder="Description"
+            name="firstName"
+            placeholder="First Name"
             required
           />
+          <input type="text" name="lastName" placeholder="Last Name" required />
+          <input type="text" name="team" placeholder="Team Fullname" required />
           <input
             type="text"
-            id="picture1"
+            name="picture1"
             placeholder="Picture 1 URL"
             required
           />
-          <input type="text" id="picture2" placeholder="Picture 2 URL" />
-          <input type="text" id="picture3" placeholder="Picture 3 URL" />
+          <!-- <input
+            type="text"
+            name="picture2"
+            placeholder="Picture 2 URL"
+            required
+          />
+          <input
+            type="text"
+            name="picture3"
+            placeholder="Picture 3 URL"
+            required
+          /> -->
           <button type="submit">Add Player</button>
         </form>
       </div>
+      <h1>List of NBA Players</h1>
       <div class="player-list">
         <ul class="list">
           <% players.forEach(function(player) { %>
           <div class="player-card">
-            <h2><%= player.firstName %></h2>
-            <p><%= player.position %></p>
+            <h2><%= player.firstName %> <%= player.lastName %></h2>
+            <p><%= player.team.fullName %></p>
             <div class="carousel">
               <% player.pictures.forEach(function(picture) { %>
               <img
@@ -245,7 +259,7 @@
     </div>
 
     <footer class="footer">
-      <h3>Samat SE-2026</h3>
+      <h3>Samat SE-2006</h3>
     </footer>
   </body>
 </html>
