@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic"
+      rel="stylesheet"
+    />
+    <title>Admin Page</title>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <ul>
+        <li>
+          <a href="/home">Main</a>
+        </li>
+        <li>
+          <a href="/">History</a>
+        </li>
+        <% if (isAdmin) { %>
+        <li><a href="/adminPage">Users</a></li>
+        <% } %>
+        <li>
+          <a href="/">Exit</a>
+        </li>
+      </ul>
+    </div>
+
+    <h1>List of NBA Players</h1>
+    <form id="addItemForm">
+      <input type="text" id="name" placeholder="Name" required />
+      <input type="text" id="description" placeholder="Description" required />
+      <input type="text" id="picture1" placeholder="Picture 1 URL" required />
+      <input type="text" id="picture2" placeholder="Picture 2 URL" />
+      <input type="text" id="picture3" placeholder="Picture 3 URL" />
+      <button type="submit">Add Player</button>
+    </form>
+    <ul>
+      <% players.forEach(function(player) { %>
+      <li>
+        <h2><%= player.name %></h2>
+        <p><%= player.description %></p>
+        <div class="carousel">
+          <% player.pictures.forEach(function(picture) { %>
+          <img src="<%= picture %>" alt="Player Image" />
+          <% }); %>
+        </div>
+        <p>Created At: <%= player.createdAt %></p>
+        <p>Updated At: <%= player.updatedAt %></p>
+        <button class="editButton">Edit</button>
+        <button class="deleteButton">Delete</button>
+      </li>
+      <% }); %>
+    </ul>
+
+    <footer class="footer">
+      <h3>Samat SE-2026</h3>
+    </footer>
+
+    <style>
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        padding: 10px 0;
+        text-align: center;
+        z-index: 1000;
+      }
+
+      .navbar ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar li {
+        display: inline;
+        margin: 0 10px;
+      }
+
+      .navbar a {
+        color: white;
+        text-decoration: none;
+      }
+
+      .navbar a:hover {
+        text-decoration: underline;
+      }
+
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        padding: 10px 0;
+        text-align: center;
+        z-index: 1000;
+        color: white;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      form {
+        margin-bottom: 20px;
+      }
+
+      input[type="text"] {
+        width: calc(100% - 10px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      li {
+        background-color: #fff;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        margin-bottom: 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .carousel {
+        display: flex;
+        justify-content: space-between;
+        overflow-x: scroll;
+        margin-bottom: 15px;
+      }
+
+      .carousel img {
+        width: 150px;
+        height: auto;
+        border-radius: 5px;
+        margin-right: 10px;
+      }
+
+      button.editButton,
+      button.deleteButton {
+        padding: 8px 15px;
+        margin-right: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button.editButton {
+        background-color: #28a745;
+        color: #fff;
+      }
+
+      button.deleteButton {
+        background-color: #dc3545;
+        color: #fff;
+      }
+
+      button.editButton:hover,
+      button.deleteButton:hover {
+        opacity: 0.8;
+      }
+    </style>
+
+    <script src="../public/js/admin.js"></script>
+  </body>
+</html>

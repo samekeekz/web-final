@@ -1,32 +1,30 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
-const session = require('express-session');
+const session = require("express-session");
 const path = require("path");
 const cors = require("cors");
 const { connectDB } = require("./config/db");
 const app = express();
-const User = require("./models/schema");
+const { Player, User } = require("./models/schema");
 const { log } = require("console");
 
 require("dotenv").config();
 
 app.use(express.static("public"));
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(cors());
-app.use(session({ secret: 'cookie', resave: true, saveUninitialized: true }));
+app.use(session({ secret: "cookie", resave: true, saveUninitialized: true }));
 
 connectDB();
-
 
 app.get("/", (req, res) => {
     res.redirect("/authorization.html");
 });
-
 
 app.post("/register", async (req, res) => {
     const { username, password } = req.body;
@@ -59,13 +57,17 @@ app.post("/login", async (req, res) => {
         const user = await User.findOne({ name: username });
 
         if (!user) {
-            return res.status(401).json({ success: false, error: "Username not found" });
+            return res
+                .status(401)
+                .json({ success: false, error: "Username not found" });
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
 
         if (!passwordMatch) {
-            return res.status(401).json({ success: false, error: "Username or password does not match" });
+            return res
+                .status(401)
+                .json({ success: false, error: "Username or password does not match" });
         }
 
         req.session.username = username;
@@ -75,14 +77,14 @@ app.post("/login", async (req, res) => {
             return res.status(200).json({
                 success: true,
                 username: user.name,
-                redirectUrl: "/adminPage.html",
+                redirectUrl: "/adminPage", // ~ Need to do something here
             });
         }
 
         res.status(200).json({
             success: true,
             username: user.name,
-            redirectUrl: "/weatherPage?username=" + user.name
+            redirectUrl: "/home", // ~ Need to do something here
         });
     } catch (error) {
         console.error(error);
@@ -115,7 +117,7 @@ async function fetchWikipediaData(cityName) {
         const wikipediaResponse = await fetch(wikipediaEndpoint);
 
         if (!wikipediaResponse.ok) {
-            throw new Error('error');
+            throw new Error("error");
         }
 
         const wikipediaData = await wikipediaResponse.json();
@@ -124,24 +126,50 @@ async function fetchWikipediaData(cityName) {
         const firstPageId = Object.keys(pages)[0];
         const extract = pages[firstPageId].extract;
 
-        const plainText = extract.replace(/<[^>]+>/g, '').trim();
+        const plainText = extract.replace(/<[^>]+>/g, "").trim();
 
         return plainText;
     } catch (error) {
-        console.error('error', error);
+        console.error("error", error);
         throw error;
     }
 }
 
+app.get("/home", async (req, res) => {
+    const { isAdmin } = req.session;
+    res.render("home", { isAdmin });
+});
 
+app.get("/admin/players", async (req, res) => {
+    try {
+        const players = await Player.find().exec();
+        res.render("adminPage", { players }); // Render admin.ejs and pass players data
+    } catch (error) {
+        console.error("Error fetching players:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
-// app.get("/admin/userlist", async (req, res) => {
+app.post("/admin/add", async (req, res) => {
+    try {
+        const { firstName, lastName, position, team, country, pictures } = req.body;
+        const player = new Player({
+            firstName,
+            lastName,
+            position,
+            team,
+            country,
+            pictures,
+        });
+        await player.save();
+        res.status(201).json({ message: "Player added successfully" });
+    } catch (error) {
+        console.error("Error adding item:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
-// })
-
-// app.post("/admin/add", async (req, res) => {
-
-// });
+// ~ Need to do something here
 
 // app.post("/admin/edit", async (req, res) => {
 
@@ -150,8 +178,6 @@ async function fetchWikipediaData(cityName) {
 // app.delete("/admin/delete", async (req, res) => {
 
 // });
-
-
 
 const port = process.env.PORT || 3000;
 
