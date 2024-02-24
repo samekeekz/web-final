@@ -23,6 +23,8 @@ app.use(session({ secret: "cookie", resave: true, saveUninitialized: true }));
 connectDB();
 
 app.get("/", (req, res) => {
+    req.session.username = null;
+    req.session.isAdmin = false;
     res.redirect("/authorization.html");
 });
 
@@ -163,23 +165,6 @@ app.get("/admin/players", async (req, res) => {
 });
 // ~ Need to implement the carousel for the images
 
-// app.post("/admin/add", async (req, res) => {
-
-//     try {
-//         const { firstName, lastName, team, picture1, picture2, picture3 } = req.body;
-//         await Player.create({
-//             firstName,
-//             lastName,
-//             team,
-//             pictures: [picture1, picture2, picture3],
-//         });
-//         res.redirect("/admin/players");
-//     } catch (error) {
-//         console.error("Error adding item:", error);
-//         res.status(500).send("Internal Server Error");
-//     }
-// });
-
 app.post("/admin/add", async (req, res) => {
 
     try {
@@ -187,7 +172,7 @@ app.post("/admin/add", async (req, res) => {
         await Player.create({
             firstName,
             lastName,
-            team,
+            team: { fullName: team },
             pictures: [picture1],
         });
         res.redirect("/admin/players");
@@ -197,13 +182,61 @@ app.post("/admin/add", async (req, res) => {
     }
 });
 
-// app.post("/admin/edit", async (req, res) => {
+app.post('/admin/update', async (req, res) => {
+    const { isAdmin } = req.session;
+    try {
+        const { previousFirstName, previousLastName, firstName, lastName, team, picture1 } = req.body;
+        console.log(previousFirstName, previousLastName, firstName, lastName, team, picture1);
+        const player = await Player.findOne({
+            firstName: previousFirstName,
+            lastName: previousLastName
+        });
+        console.log(player);
+        if (!player) {
+            return res.status(404).json({ error: 'Player not found' });
+        }
 
-// });
+        // Update player data
+        player.firstName = firstName;
+        player.lastName = lastName;
+        player.team.fullName = team;
+        player.pictures = [picture1];
 
-// app.delete("/admin/delete", async (req, res) => {
+        // Save the updated player data
+        await player.save();
+        const players = await Player.find().exec();
+        // Send a success response
+        res.render("adminPage", { players, isAdmin }); // Render admin.ejs and pass players data
+    } catch (error) {
+        // If there's an error, return an error response
+        console.error('Error updating player:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
-// });
+app.delete("/admin/delete", async (req, res) => {
+    const { isAdmin } = req.session;
+    const { firstName, lastName } = req.body;
+    console.log(firstName, lastName);
+    try {
+        const player = await Player.findOne({
+            firstName,
+            lastName,
+        });
+
+        if (!player) {
+            return res.status(404).json({ error: "Player not found" });
+        }
+
+        await Player.deleteOne({ firstName, lastName });
+
+        const players = await Player.find().exec();
+        res.render("adminPage", { players, isAdmin }); // Render admin.ejs and pass players data
+    } catch (error) {
+        console.error("Error deleting player:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 const port = process.env.PORT || 3000;
 
