@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic"
+      rel="stylesheet"
+    />
+    <title>NBA Player Search</title>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+        padding-top: 50px;
+      }
+
+      .navbar {
+        background-color: #333;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+        z-index: 1000;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
+
+      .navbar ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar li {
+        display: inline;
+        margin: 0 10px;
+      }
+
+      .navbar a {
+        color: white;
+        text-decoration: none;
+      }
+
+      .navbar a:hover {
+        text-decoration: underline;
+      }
+
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        padding: 10px 0;
+        text-align: center;
+        z-index: 1000;
+        color: white;
+      }
+
+      .footer h3 {
+        margin: 0;
+      }
+
+      .language-buttons {
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .language-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .language-button:not(.active):hover {
+        background-color: #0056b3;
+      }
+
+      .active {
+        background-color: #28a745;
+      }
+
+      h1,
+      h2 {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      form {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        margin: 10px;
+        width: 300px;
+      }
+
+      button[type="submit"] {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #0056b3;
+      }
+
+      .player-info {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      p {
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <ul>
+        <li><a href="/main"><%= __('main') %></a></li>
+        <li><a href="/players"><%= __('playersPage') %></a></li>
+        <% if (isAdmin) { %>
+        <li><a href="/adminPage"><%= __('admin') %></a></li>
+        <% } %>
+        <li><a href="/history"><%= __('history') %></a></li>
+        <li><a href="/"><%= __('exit') %></a></li>
+      </ul>
+    </div>
+
+    <div class="language-buttons">
+      <button
+        class="language-button"
+        id="enButton"
+        onclick="changeLanguage('en')"
+      >
+        English
+      </button>
+      <button
+        class="language-button"
+        id="ruButton"
+        onclick="changeLanguage('ru')"
+      >
+        Russian
+      </button>
+      <button
+        class="language-button"
+        id="kzButton"
+        onclick="changeLanguage('kz')"
+      >
+        Kazakh
+      </button>
+    </div>
+
+    <h1>Basketball Player Information</h1>
+    <form action="/getPlayerInfo" method="post">
+      <label for="fullName">Enter Basketball Player Full Name:</label><br />
+      <input
+        type="text"
+        id="fullName"
+        name="fullName"
+        placeholder="Enter Firstname and Lastname"
+        required
+      /><br />
+      <button type="submit">Get Info</button>
+    </form>
+
+    <% if(playerData) { %>
+    <div class="player-info">
+      <h2>Player Information</h2>
+      <p><strong>First Name:</strong> <%= playerData.first_name %></p>
+      <p><strong>Last Name:</strong> <%= playerData.last_name %></p>
+      <p><strong>Position:</strong> <%= playerData.position %></p>
+      <p><strong>Height:</strong> <%= playerData.height %></p>
+      <p><strong>Weight:</strong> <%= playerData.weight %></p>
+      <p><strong>Country:</strong> <%= playerData.country %></p>
+      <p><strong>Team:</strong> <%= playerData.team.full_name %></p>
+    </div>
+    <% } else{ %>
+    <div class="player-info">
+      <h2>There is no such player</h2>
+    </div>
+    <% } %>
+
+    <footer class="footer">
+      <h3>Samat SE-2006</h3>
+    </footer>
+
+    <script>
+      function changeLanguage(lang) {
+        const currentUrl = window.location.href;
+        const urlWithoutParams = currentUrl.split("?")[0];
+        const newUrl = `${urlWithoutParams}?lang=${lang}`;
+        window.location.href = newUrl;
+      }
+
+      // Get the active language from the URL
+      const params = new URLSearchParams(window.location.search);
+      const activeLanguage = params.get("lang");
+
+      // Add 'active' class to the button representing the active language
+      if (activeLanguage) {
+        const activeButton = document.getElementById(`${activeLanguage}Button`);
+        activeButton.classList.add("active");
+      }
+    </script>
+  </body>
+</html>

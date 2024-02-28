@@ -12,6 +12,23 @@ const userSchema = mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        apiData: [
+            {
+                firstName: {
+                    type: String,
+                    required: true
+                },
+                lastName: {
+                    type: String,
+                    required: true
+                },
+                team: String,
+                position: String,
+                country: String,
+                height: String,
+                weight: String,
+            }
+        ],
     },
     {
         collection: "users",

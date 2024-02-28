@@ -1,0 +1,13 @@
+{
+  "addPlayer": "Add Player",
+  "main": "Main",
+  "admin": "Admin",
+  "exit": "Exit",
+  "listOfPlayers": "List of Players",
+  "edit": "Edit",
+  "delete": "Delete",
+  "editPlayer": "Edit Player",
+  "save": "Save",
+  "playersPage": "Players Page",
+  "history": "History"
+}

@@ -264,6 +264,7 @@
     <div class="navbar">
       <ul>
         <li><a href="/main"><%= __('main') %></a></li>
+        <li><a href="/players"><%= __('playersPage') %></a></li>
         <% if (isAdmin) { %>
         <li><a href="/adminPage"><%= __('admin') %></a></li>
         <% } %>
@@ -296,38 +297,6 @@
     </div>
 
     <div class="container">
-      <div class="admin-features">
-        <h2 style="margin-bottom: 10px"><%= __('addPlayer') %></h2>
-        <form id="addItemForm" action="/admin/add" method="POST">
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            required
-          />
-          <input type="text" name="lastName" placeholder="Last Name" required />
-          <input type="text" name="team" placeholder="Team Fullname" required />
-          <input
-            type="text"
-            name="picture1"
-            placeholder="Picture 1 URL"
-            required
-          />
-          <!-- <input
-            type="text"
-            name="picture2"
-            placeholder="Picture 2 URL"
-            required
-          />
-          <input
-            type="text"
-            name="picture3"
-            placeholder="Picture 3 URL"
-            required
-          /> -->
-          <button type="submit"><%= __('addPlayer') %></button>
-        </form>
-      </div>
       <h1><%= __('listOfPlayers') %></h1>
       <div class="player-list">
         <ul class="list">
@@ -344,42 +313,9 @@
               />
               <% }); %>
             </div>
-            <div class="btns">
-              <button class="editButton"><%= __('edit') %></button>
-              <button class="deleteButton"><%= __('delete') %></button>
-            </div>
           </div>
           <% }); %>
         </ul>
-      </div>
-    </div>
-
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-      <!-- Modal content -->
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2><%= __('editPlayer') %></h2>
-        <input
-          type="text"
-          id="modalFirstName"
-          placeholder="First Name"
-          required
-        />
-        <input
-          type="text"
-          id="modalLastName"
-          placeholder="Last Name"
-          required
-        />
-        <input type="text" id="modalTeam" placeholder="Team" required />
-        <input
-          type="text"
-          id="modalPicture"
-          placeholder="Picture URL"
-          required
-        />
-        <button onclick="updatePlayer()"><%= __('save') %></button>
       </div>
     </div>
 
@@ -388,140 +324,6 @@
     </footer>
 
     <script>
-      // Get the modal
-      let modal = document.getElementById("myModal");
-
-      // Get the button that opens the modal
-      let btn = document.getElementsByClassName("editButton");
-      let deleteButton = document.getElementsByClassName("deleteButton");
-      // Get the <span> element that closes the modal
-      let span = document.getElementsByClassName("close")[0];
-
-      let previousFirstName;
-      let previousLastName;
-
-      // When the user clicks on the button, open the modal
-      for (let i = 0; i < btn.length; i++) {
-        btn[i].onclick = function () {
-          modal.style.display = "block";
-
-          // Get the player data from the card
-          let playerCard = this.parentElement.parentElement;
-          let playerName = playerCard.querySelector("h2").innerText.split(" ");
-          previousFirstName = playerName[0]; // Store previous first name
-          previousLastName = playerName[1]; // Store previous last name
-          let team = playerCard.querySelector("p").innerText;
-          let pictures = Array.from(
-            playerCard.querySelectorAll(".carousel img")
-          ).map((img) => img.src);
-
-          // Populate the modal fields with current data
-          document.getElementById("modalFirstName").value = previousFirstName;
-          document.getElementById("modalLastName").value = previousLastName;
-          document.getElementById("modalTeam").value = team;
-          document.getElementById("modalPicture").value = pictures.join(",");
-        };
-
-        deleteButton[i].onclick = function () {
-          let playerCard = this.parentElement.parentElement;
-          let playerName = playerCard.querySelector("h2").innerText.split(" ");
-          previousFirstName = playerName[0]; // Store previous first name
-          previousLastName = playerName[1]; // Store previous last name
-
-          fetch("/admin/delete", {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              firstName: previousFirstName,
-              lastName: previousLastName,
-            }),
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error("Network response was not ok");
-              }
-            })
-            .then((data) => {
-              console.log("Delete successful:");
-              window.location.reload();
-            })
-            .catch((error) => {
-              console.error(
-                "There was a problem with your fetch operation:",
-                error
-              );
-              // Handle errors here
-            });
-        };
-      }
-
-      // When the user clicks on <span> (x), close the modal
-      span.onclick = function () {
-        modal.style.display = "none";
-      };
-
-      // When the user clicks anywhere outside of the modal, close it
-      window.onclick = function (event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-      };
-
-      // Function to handle the HTTP POST request
-      function updatePlayer() {
-        // Get player data from modal inputs
-        let firstName = document.getElementById("modalFirstName").value;
-        let lastName = document.getElementById("modalLastName").value;
-        let team = document.getElementById("modalTeam").value;
-        let picture1 = document.getElementById("modalPicture").value;
-
-        // Create the payload object
-        let payload = {
-          previousFirstName: previousFirstName,
-          previousLastName: previousLastName,
-          firstName: firstName,
-          lastName: lastName,
-          team: team,
-          picture1: picture1,
-        };
-
-        // Send HTTP POST request to server
-        fetch("/admin/update", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-          })
-          .then((data) => {
-            console.log("Update successful:");
-            window.location.reload();
-            closeModal();
-          })
-          .catch((error) => {
-            console.error(
-              "There was a problem with your fetch operation:",
-              error
-            );
-            // Handle errors here
-          });
-      }
-
-      // Function to close the modal
-      function closeModal() {
-        // Get the modal
-        let modal = document.getElementById("myModal");
-        // Close the modal
-        modal.style.display = "none";
-      }
-
       function changeLanguage(lang) {
         const currentUrl = window.location.href;
         const urlWithoutParams = currentUrl.split("?")[0];

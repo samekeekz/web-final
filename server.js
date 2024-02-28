@@ -7,7 +7,18 @@ const cors = require("cors");
 const { connectDB } = require("./config/db");
 const app = express();
 const { Player, User } = require("./models/schema");
-const { log } = require("console");
+const i18n = require('i18n');
+const axios = require('axios');
+
+i18n.configure({
+    locales: ['en', 'ru'], // Supported languages
+    defaultLocale: 'en', // Default language
+    directory: path.join(__dirname, 'locales'), // Directory containing localization files
+    objectNotation: true, // Use object notation for translation keys
+    register: global, // Register i18n functions globally
+    queryParameter: 'lang',
+});
+
 
 require("dotenv").config();
 
@@ -19,6 +30,7 @@ app.use(bodyParser.json());
 
 app.use(cors());
 app.use(session({ secret: "cookie", resave: true, saveUninitialized: true }));
+app.use(i18n.init);
 
 connectDB();
 
@@ -86,7 +98,7 @@ app.post("/login", async (req, res) => {
         res.status(200).json({
             success: true,
             username: user.name,
-            redirectUrl: "/home",
+            redirectUrl: "/main",
         });
     } catch (error) {
         console.error(error);
@@ -112,8 +124,8 @@ app.get("/photo", async (req, res) => {
     }
 });
 
-async function fetchWikipediaData(cityName) {
-    const wikipediaEndpoint = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro=true&redirects=true&titles=${cityName}&origin=*`;
+async function fetchWikipediaData(playerName) {
+    const wikipediaEndpoint = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro=true&redirects=true&titles=${playerName}&origin=*`;
 
     try {
         const wikipediaResponse = await fetch(wikipediaEndpoint);
@@ -137,11 +149,98 @@ async function fetchWikipediaData(cityName) {
     }
 }
 
-app.get("/home", async (req, res) => {
+app.get("/main", async (req, res) => {
     const { isAdmin } = req.session;
-    res.render("home", { isAdmin });
+    res.render("main", { isAdmin, playerData: null });
 });
 
+
+app.get("/players", async (req, res) => {
+    const { isAdmin } = req.session;
+    try {
+        const players = await Player.find().exec();
+        res.render("players", { players, isAdmin }); // Render admin.ejs and pass players data
+    } catch (error) {
+        console.error("Error fetching players:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+
+})
+
+app.post('/getPlayerInfo', async (req, res) => {
+    const { isAdmin, username } = req.session;
+    try {
+        const { fullName } = req.body;
+        const [firstName, lastName] = fullName.split(' ');
+
+        // Fetch player data using the first name
+        const response = await axios.get(`https://api.balldontlie.io/v1/players?search=${firstName}&per_page=100`, {
+            headers: {
+                'Authorization': 'e7aaab04-ac11-4263-b188-ec3371e9b578'
+            }
+        });
+
+        const players = response.data;
+        // Search for the player whose first name and last name match the requested player
+        const matchingPlayer = players.data.find(player => {
+            return player.first_name.toLowerCase() === firstName.toLowerCase() &&
+                player.last_name.toLowerCase() === lastName.toLowerCase();
+        });
+
+        if (!matchingPlayer) {
+            return res.render('main', { playerData: null, isAdmin });
+        }
+
+        try {
+            const { first_name, last_name, position, height, weight, country, team } = matchingPlayer;
+
+            const userData = {
+                firstName: first_name,
+                lastName: last_name,
+                position,
+                height,
+                weight,
+                country,
+                team: team.full_name
+            };
+
+            const user = await User.findOne({ name: username });
+
+            if (user) {
+                user.apiData.push(userData);
+                await user.save();
+                console.log('Player data saved successfully.');
+            } else {
+                console.log('User not found.');
+            }
+        } catch (error) {
+            console.error('Error saving player data:', error.message);
+        }
+
+
+        // Return the matching player data or null if no match is found
+        res.render('main', { playerData: matchingPlayer || null, isAdmin });
+    } catch (error) {
+        console.error('Error fetching player data:', error.message);
+        res.render('error');
+    }
+});
+
+app.get("/history", async (req, res) => {
+    const { username, isAdmin } = req.session;
+    try {
+        const user = await User.findOne({ name: username });
+        const userData = user;
+        res.render("history", { userData, isAdmin });
+    } catch (error) {
+        console.error("Error fetching player data:", error.message);
+        res.render('error');
+    }
+});
+
+
+
+// * Admin Page
 app.get("/adminPage", async (req, res) => {
     const { isAdmin } = req.session;
     try {
@@ -163,7 +262,7 @@ app.get("/admin/players", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
-// ~ Need to implement the carousel for the images
+// * Need to implement the carousel for the images
 
 app.post("/admin/add", async (req, res) => {
 
