@@ -263,11 +263,12 @@
   <body>
     <div class="navbar">
       <ul>
-        <li><a href="/main"><%= __('main') %></a></li>
-        <li><a href="/players"><%= __('playersPage') %></a></li>
+        <li><a href="/main?lang=en"><%= __('main') %></a></li>
+        <li><a href="/players?lang=en"><%= __('playersPage') %></a></li>
         <% if (isAdmin) { %>
-        <li><a href="/adminPage"><%= __('admin') %></a></li>
+        <li><a href="/adminPage?lang=en"><%= __('admin') %></a></li>
         <% } %>
+        <li><a href="/history?lang=en"><%= __('history') %></a></li>
         <li><a href="/"><%= __('exit') %></a></li>
       </ul>
     </div>
@@ -278,21 +279,21 @@
         id="enButton"
         onclick="changeLanguage('en')"
       >
-        English
+        <%= __('english') %>
       </button>
       <button
         class="language-button"
         id="ruButton"
         onclick="changeLanguage('ru')"
       >
-        Russian
+        <%= __('russian') %>
       </button>
       <button
         class="language-button"
         id="kzButton"
         onclick="changeLanguage('kz')"
       >
-        Kazakh
+        <%= __('kazakh') %>
       </button>
     </div>
 

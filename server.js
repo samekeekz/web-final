@@ -34,6 +34,23 @@ app.use(i18n.init);
 
 connectDB();
 
+app.use((req, res, next) => {
+    // Set default language to "en" if not already set
+    if (!req.session.lang) {
+        req.session.lang = "en";
+    }
+
+    // Get language from query parameter if present
+    const lang = req.query.lang;
+
+    // Update language in session if query parameter is provided
+    if (lang && ["en", "ru", "kz"].includes(lang)) { // Add more languages as needed
+        req.session.lang = lang;
+    }
+
+    next();
+});
+
 app.get("/", (req, res) => {
     req.session.username = null;
     req.session.isAdmin = false;
@@ -91,14 +108,14 @@ app.post("/login", async (req, res) => {
             return res.status(200).json({
                 success: true,
                 username: user.name,
-                redirectUrl: "/adminPage",
+                redirectUrl: "/adminPage?lang=en",
             });
         }
 
         res.status(200).json({
             success: true,
             username: user.name,
-            redirectUrl: "/main",
+            redirectUrl: "/main?lang=en",
         });
     } catch (error) {
         console.error(error);
@@ -150,8 +167,8 @@ async function fetchWikipediaData(playerName) {
 }
 
 app.get("/main", async (req, res) => {
-    const { isAdmin } = req.session;
-    res.render("main", { isAdmin, playerData: null });
+    const { isAdmin, lang } = req.session;
+    res.render("main", { isAdmin, playerData: null, lang });
 });
 
 
