@@ -191,20 +191,19 @@
 
     <div class="navbar">
       <ul>
-        <li><a href="/main?lang=en"><%= __('main') %></a></li>
-        <li><a href="/players?lang=en"><%= __('playersPage') %></a></li>
+        <li><a href="/main?lang=en">Main</a></li>
+        <li><a href="/players?lang=en">Players Page</a></li>
         <% if (isAdmin) { %>
-        <li><a href="/adminPage?lang=en"><%= __('admin') %></a></li>
+        <li><a href="/adminPage?lang=en">Admin</a></li>
         <% } %>
-        <li><a href="/history?lang=en"><%= __('history') %></a></li>
-        <li><a href="/"><%= __('exit') %></a></li>
+        <li><a href="/history?lang=en">History</a></li>
+        <li><a href="/">Exit</a></li>
       </ul>
     </div>
 
-    <h1><%= __('basketballPlayerInfo') %></h1>
+    <h1>Basketball Player Info</h1>
     <form action="/getPlayerInfo" method="post">
-      <label for="fullName"><%= __('enterBasketballPlayerFullname') %></label
-      ><br />
+      <label for="fullName">Enter Player's Fullname</label><br />
       <input
         type="text"
         id="fullName"
@@ -212,32 +211,30 @@
         placeholder="Enter Firstname and Lastname"
         required
       /><br />
-      <button type="submit"><%= __('getInfo') %></button>
+      <button type="submit">Get info</button>
     </form>
 
     <% if(playerData) { %>
     <div class="player-info">
-      <h2><%= __('playerInfo') %></h2>
-      <p>
-        <strong><%= __('firstName') %>:</strong> <%= playerData.first_name %>
-      </p>
-      <p><strong><%= __('lastName') %>:</strong> <%= playerData.last_name %></p>
-      <p><strong><%= __('position') %>:</strong> <%= playerData.position %></p>
-      <p><strong><%= __('height') %>:</strong> <%= playerData.height %></p>
-      <p><strong><%= __('weight') %>:</strong> <%= playerData.weight %></p>
-      <p><strong><%= __('country') %>:</strong> <%= playerData.country %></p>
+      <h2>Player Info</h2>
+      <p><strong>First Name:</strong> <%= playerData.first_name %></p>
+      <p><strong>Last Name:</strong> <%= playerData.last_name %></p>
+      <p><strong>Position:</strong> <%= playerData.position %></p>
+      <p><strong>Height:</strong> <%= playerData.height %></p>
+      <p><strong>Weight:</strong> <%= playerData.weight %></p>
+      <p><strong>Country:</strong> <%= playerData.country %></p>
       <p class="team">
-        <strong><%= __('team') %>:</strong> <%= playerData.team.full_name %>
+        <strong>Team:</strong> <%= playerData.team.full_name %>
       </p>
     </div>
 
     <div class="team-info">
-      <button onclick="getTeamStats()"><%= __('additionalInfoTeam') %></button>
+      <button onclick="getTeamStats()">Additional Info for Team</button>
       <div id="teamStats"></div>
     </div>
     <% } else{ %>
     <div class="player-info">
-      <h2><%= __('noPlayer') %></h2>
+      <h2>There is no such Player</h2>
     </div>
     <% } %>
 
