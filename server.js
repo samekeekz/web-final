@@ -34,6 +34,15 @@ app.use(i18n.init);
 
 connectDB();
 
+const checkAuth = (req, res, next) => {
+    if (!req.session.username) {
+        // User is not logged in, redirect to the signup page
+        return res.redirect("/authorization.html");
+    }
+    // User is logged in, proceed to the next middleware or route handler
+    next();
+};
+
 app.use((req, res, next) => {
     // Set default language to "en" if not already set
     if (!req.session.lang) {
@@ -48,6 +57,14 @@ app.use((req, res, next) => {
         req.session.lang = lang;
     }
 
+    next();
+});
+
+// Redirect to signup page if user tries to access a protected route without logging in
+app.use((req, res, next) => {
+    if (!req.session.username && req.url !== '/authorization.html') {
+        return res.redirect("/authorization.html");
+    }
     next();
 });
 
@@ -123,56 +140,15 @@ app.post("/login", async (req, res) => {
     }
 });
 
-app.get("/photo", async (req, res) => {
-    const { car } = req.query;
-    const unsplashApiUrl = `https://api.unsplash.com/photos/random?query=${car}&client_id=CrXTXNPoE1q_As9WjN7gDm5-gXxMaQfRq5O4btwNM4c`;
 
-    try {
-        const unsplashResponse = await fetch(unsplashApiUrl);
-        if (!unsplashResponse.ok) {
-            throw new Error("Unsplash API error");
-        }
 
-        const unsplashData = await unsplashResponse.json();
-        res.status(200).json(unsplashData.urls.raw);
-    } catch (error) {
-        console.error("Error fetching background image:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-async function fetchWikipediaData(playerName) {
-    const wikipediaEndpoint = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro=true&redirects=true&titles=${playerName}&origin=*`;
-
-    try {
-        const wikipediaResponse = await fetch(wikipediaEndpoint);
-
-        if (!wikipediaResponse.ok) {
-            throw new Error("error");
-        }
-
-        const wikipediaData = await wikipediaResponse.json();
-
-        const pages = wikipediaData.query.pages;
-        const firstPageId = Object.keys(pages)[0];
-        const extract = pages[firstPageId].extract;
-
-        const plainText = extract.replace(/<[^>]+>/g, "").trim();
-
-        return plainText;
-    } catch (error) {
-        console.error("error", error);
-        throw error;
-    }
-}
-
-app.get("/main", async (req, res) => {
+app.get("/main", checkAuth, async (req, res) => {
     const { isAdmin } = req.session;
     res.render("main", { isAdmin, playerData: null });
 });
 
 
-app.get("/players", async (req, res) => {
+app.get("/players", checkAuth, async (req, res) => {
     const { isAdmin } = req.session;
     try {
         const players = await Player.find().exec();
@@ -184,7 +160,7 @@ app.get("/players", async (req, res) => {
 
 })
 
-app.post('/getPlayerInfo', async (req, res) => {
+app.post('/getPlayerInfo', checkAuth, async (req, res) => {
     const { isAdmin, username } = req.session;
     try {
         const { fullName } = req.body;
@@ -243,7 +219,7 @@ app.post('/getPlayerInfo', async (req, res) => {
     }
 });
 
-app.get("/history", async (req, res) => {
+app.get("/history", checkAuth, async (req, res) => {
     const { username, isAdmin } = req.session;
     try {
         const user = await User.findOne({ name: username });
@@ -255,7 +231,7 @@ app.get("/history", async (req, res) => {
     }
 });
 
-app.post('/teamStats', async (req, res) => {
+app.post('/teamStats', checkAuth, async (req, res) => {
     const { team } = req.body;
     console.log(team);
     try {
@@ -290,7 +266,7 @@ app.post('/teamStats', async (req, res) => {
 
 
 // * Admin Page
-app.get("/adminPage", async (req, res) => {
+app.get("/adminPage", checkAuth, async (req, res) => {
     const { isAdmin } = req.session;
     try {
         const players = await Player.find().exec();
@@ -301,7 +277,7 @@ app.get("/adminPage", async (req, res) => {
     }
 });
 
-app.get("/admin/players", async (req, res) => {
+app.get("/admin/players", checkAuth, async (req, res) => {
     const { isAdmin } = req.session;
     try {
         const players = await Player.find().exec();
@@ -313,7 +289,7 @@ app.get("/admin/players", async (req, res) => {
 });
 // * Need to implement the carousel for the images
 
-app.post("/admin/add", async (req, res) => {
+app.post("/admin/add", checkAuth, async (req, res) => {
 
     try {
         const { firstName, lastName, team, picture1 } = req.body;
@@ -330,7 +306,7 @@ app.post("/admin/add", async (req, res) => {
     }
 });
 
-app.post('/admin/update', async (req, res) => {
+app.post('/admin/update', checkAuth, async (req, res) => {
     const { isAdmin } = req.session;
     try {
         const { previousFirstName, previousLastName, firstName, lastName, team, picture1 } = req.body;
@@ -362,7 +338,7 @@ app.post('/admin/update', async (req, res) => {
     }
 });
 
-app.delete("/admin/delete", async (req, res) => {
+app.delete("/admin/delete", checkAuth, async (req, res) => {
     const { isAdmin } = req.session;
     const { firstName, lastName } = req.body;
     console.log(firstName, lastName);

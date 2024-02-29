@@ -13,5 +13,12 @@
   "english": "Английский",
   "russian": "Русский",
   "kazakh": "Казахский",
-  "basketballPlayerInfo": "Информация об игроке"
+  "basketballPlayerInfo": "Информация об игроке",
+  "firstName": "Имя",
+  "lastName": "Фамилия",
+  "position": "Позиция",
+  "height": "Рост",
+  "weight": "Вес",
+  "country": "Страна",
+  "team": "Команда"
 }

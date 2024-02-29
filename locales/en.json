@@ -13,5 +13,12 @@
   "english": "English",
   "russian": "Russian",
   "kazakh": "Kazakh",
-  "basketballPlayerInfo": "Basketball Player Info"
+  "basketballPlayerInfo": "Basketball Player Info",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "position": "Position",
+  "height": "Height",
+  "weight": "Weight",
+  "country": "Country",
+  "team": "Team"
 }

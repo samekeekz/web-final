@@ -258,9 +258,33 @@
       .active {
         background-color: #28a745;
       }
+
+      .basketball {
+        position: fixed;
+        bottom: 40px;
+        right: 10px;
+        width: 50px;
+        height: auto;
+        animation: bounce 0.5s infinite alternate;
+      }
+
+      @keyframes bounce {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-20px);
+        }
+      }
     </style>
   </head>
   <body>
+    <img
+      src="https://png.pngtree.com/png-vector/20230104/ourmid/pngtree-cartoon-illustration-of-basketball-png-image_6550046.png"
+      alt="Basketball"
+      class="basketball"
+    />
+
     <div class="navbar">
       <ul>
         <li><a href="/main?lang=en"><%= __('main') %></a></li>
