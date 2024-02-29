@@ -183,7 +183,7 @@
         cursor: pointer;
         transition: background-color 0.3s ease;
         display: block;
-        margin: 0 auto 20px; /* Center the button and add some bottom margin */
+        margin: 0 auto 20px;
       }
 
       .team-info button:hover {
@@ -301,18 +301,16 @@
         window.location.href = newUrl;
       }
 
-      // Get the active language from the URL
       const params = new URLSearchParams(window.location.search);
       const activeLanguage = params.get("lang");
 
-      // Add 'active' class to the button representing the active language
       if (activeLanguage) {
         const activeButton = document.getElementById(`${activeLanguage}Button`);
         activeButton.classList.add("active");
       }
 
       function displayTeamStats(data) {
-        const teamStats = data.teamStatistics; // Accessing team statistics object from the response
+        const teamStats = data.teamStatistics;
         const teamStatsDiv = document.getElementById("teamStats");
         const statsList = document.createElement("ul");
         statsList.innerHTML = "";

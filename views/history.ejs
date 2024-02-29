@@ -237,11 +237,9 @@
         window.location.href = newUrl;
       }
 
-      // Get the active language from the URL
       const params = new URLSearchParams(window.location.search);
       const activeLanguage = params.get("lang");
 
-      // Add 'active' class to the button representing the active language
       if (activeLanguage) {
         const activeButton = document.getElementById(`${activeLanguage}Button`);
         activeButton.classList.add("active");

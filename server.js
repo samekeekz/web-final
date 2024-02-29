@@ -11,7 +11,7 @@ const i18n = require('i18n');
 const axios = require('axios');
 
 i18n.configure({
-    locales: ['en', 'ru'], // Supported languages
+    locales: ['en', 'ru', 'kz'], // Supported languages
     defaultLocale: 'en', // Default language
     directory: path.join(__dirname, 'locales'), // Directory containing localization files
     objectNotation: true, // Use object notation for translation keys
