@@ -167,8 +167,8 @@ async function fetchWikipediaData(playerName) {
 }
 
 app.get("/main", async (req, res) => {
-    const { isAdmin, lang } = req.session;
-    res.render("main", { isAdmin, playerData: null, lang });
+    const { isAdmin } = req.session;
+    res.render("main", { isAdmin, playerData: null });
 });
 
 
@@ -205,7 +205,7 @@ app.post('/getPlayerInfo', async (req, res) => {
         });
 
         if (!matchingPlayer) {
-            return res.render('main', { playerData: null, isAdmin });
+            return res.render('main?lang=en', { playerData: null, isAdmin });
         }
 
         try {
@@ -255,6 +255,38 @@ app.get("/history", async (req, res) => {
     }
 });
 
+app.post('/teamStats', async (req, res) => {
+    const { team } = req.body;
+    console.log(team);
+    try {
+        // First API request to get the team ID
+        const teamResponse = await axios.get(`https://v2.nba.api-sports.io/teams?name=${team}`, {
+            headers: {
+                'x-rapidapi-host': 'v2.nba.api-sports.io',
+                'x-rapidapi-key': 'aeffaf15370f438b3db5e3dfecb36c3e'
+            }
+        });
+
+        // Extracting the team ID from the response
+        const teamId = teamResponse.data.response[0].id;
+        console.log(teamId);
+        // Second API request to get team statistics using the obtained team ID
+        const statisticsResponse = await axios.get(`https://v2.nba.api-sports.io/teams/statistics?season=2023&id=${teamId}`, {
+            headers: {
+                'x-rapidapi-host': 'v2.nba.api-sports.io',
+                'x-rapidapi-key': 'aeffaf15370f438b3db5e3dfecb36c3e'
+            }
+        });
+
+        // Sending the team statistics data in the response
+        const teamStatistics = statisticsResponse.data.response[0];
+        console.log(teamStatistics);
+        res.json({ teamStatistics });
+    } catch (error) {
+        // Handling errors
+        res.status(500).json({ error: 'Failed to fetch team statistics' });
+    }
+});
 
 
 // * Admin Page

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= lang %>">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -139,9 +139,77 @@
       p {
         margin: 10px 0;
       }
+
+      .team-info {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .team-info h2 {
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .team-info ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .team-info li {
+        margin-bottom: 5px;
+      }
+
+      .team-info li strong {
+        font-weight: bold;
+        margin-right: 5px;
+      }
+
+      .team-info button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: block;
+        margin: 0 auto 20px; /* Center the button and add some bottom margin */
+      }
+
+      .team-info button:hover {
+        background-color: #0056b3;
+      }
+
+      .basketball {
+        position: fixed;
+        bottom: 40px;
+        right: 10px;
+        width: 50px;
+        height: auto;
+        animation: bounce 0.5s infinite alternate;
+      }
+
+      @keyframes bounce {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-20px); /* Adjust the bounce height as needed */
+        }
+      }
     </style>
   </head>
   <body>
+    <img
+      src="https://png.pngtree.com/png-vector/20230104/ourmid/pngtree-cartoon-illustration-of-basketball-png-image_6550046.png"
+      alt="Basketball"
+      class="basketball"
+    />
+
     <div class="navbar">
       <ul>
         <li><a href="/main?lang=en"><%= __('main') %></a></li>
@@ -178,7 +246,7 @@
       </button>
     </div>
 
-    <h1>Basketball Player Information</h1>
+    <h1><%= __('basketballPlayerInfo') %></h1>
     <form action="/getPlayerInfo" method="post">
       <label for="fullName">Enter Basketball Player Full Name:</label><br />
       <input
@@ -200,7 +268,14 @@
       <p><strong>Height:</strong> <%= playerData.height %></p>
       <p><strong>Weight:</strong> <%= playerData.weight %></p>
       <p><strong>Country:</strong> <%= playerData.country %></p>
-      <p><strong>Team:</strong> <%= playerData.team.full_name %></p>
+      <p class="team">
+        <strong>Team:</strong> <%= playerData.team.full_name %>
+      </p>
+    </div>
+
+    <div class="team-info">
+      <button onclick="getTeamStats()">See additional info about team</button>
+      <div id="teamStats"></div>
     </div>
     <% } else{ %>
     <div class="player-info">
@@ -228,6 +303,51 @@
       if (activeLanguage) {
         const activeButton = document.getElementById(`${activeLanguage}Button`);
         activeButton.classList.add("active");
+      }
+
+      function displayTeamStats(data) {
+        const teamStats = data.teamStatistics; // Accessing team statistics object from the response
+        const teamStatsDiv = document.getElementById("teamStats");
+        const statsList = document.createElement("ul");
+        statsList.innerHTML = "";
+
+        const stats = {
+          Games: teamStats.games,
+          "Fast Break Points": teamStats.fastBreakPoints,
+          "Points in Paint": teamStats.pointsInPaint,
+          "Biggest Lead": teamStats.biggestLead,
+          "Second Chance Points": teamStats.secondChancePoints,
+          "Points Off Turnovers": teamStats.pointsOffTurnovers,
+          "Total Points": teamStats.points,
+        };
+
+        for (const [key, value] of Object.entries(stats)) {
+          const listItem = document.createElement("li");
+          listItem.innerHTML = `<strong>${key}:</strong> ${value}`;
+          statsList.appendChild(listItem);
+        }
+
+        teamStatsDiv.appendChild(statsList);
+      }
+
+      async function getTeamStats() {
+        const teamName = document
+          .querySelector(".team")
+          .innerText.split(":")[1]
+          .trim();
+        try {
+          const response = await fetch("/teamStats", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ team: teamName }),
+          });
+          const data = await response.json();
+          displayTeamStats(data);
+        } catch (error) {
+          console.error("Error fetching team stats:", error);
+        }
       }
     </script>
   </body>
