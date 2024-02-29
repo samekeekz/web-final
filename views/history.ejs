@@ -23,14 +23,14 @@
 
       .navbar {
         background-color: #333;
-        color: white;
+        color: #fff;
         padding: 10px 0;
         text-align: center;
+        z-index: 1000;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        z-index: 1000;
       }
 
       .navbar ul {
@@ -40,17 +40,23 @@
       }
 
       .navbar li {
-        display: inline;
+        display: inline-block;
         margin: 0 10px;
       }
 
       .navbar a {
         color: white;
         text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 5px;
       }
 
       .navbar a:hover {
-        text-decoration: underline;
+        background-color: #555;
+      }
+
+      .navbar .active {
+        background-color: #555;
       }
 
       .main-content {

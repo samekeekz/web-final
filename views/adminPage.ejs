@@ -36,17 +36,23 @@
       }
 
       .navbar li {
-        display: inline;
+        display: inline-block;
         margin: 0 10px;
       }
 
       .navbar a {
         color: white;
         text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 5px;
       }
 
       .navbar a:hover {
-        text-decoration: underline;
+        background-color: #555;
+      }
+
+      .navbar .active {
+        background-color: #555;
       }
 
       .footer {
@@ -139,15 +145,45 @@
       }
 
       .carousel {
-        display: flex;
-        overflow-x: auto;
-        margin-bottom: 15px;
+        position: relative;
+        width: 100%;
+        overflow: hidden;
       }
 
-      .carousel img {
-        width: 200px;
-        height: auto;
-        border-radius: 10px;
+      .carousel-image {
+        display: none;
+        width: 100%;
+      }
+
+      .active {
+        display: block;
+      }
+
+      .btns {
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      .prev,
+      .next {
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: none;
+        outline: none;
+        z-index: 1;
+      }
+
+      .prev {
+        left: 0;
+      }
+
+      .next {
+        right: 0;
       }
 
       .button-container {
@@ -339,7 +375,7 @@
             placeholder="Picture 1 URL"
             required
           />
-          <!-- <input
+          <input
             type="text"
             name="picture2"
             placeholder="Picture 2 URL"
@@ -350,7 +386,7 @@
             name="picture3"
             placeholder="Picture 3 URL"
             required
-          /> -->
+          />
           <button type="submit"><%= __('addPlayer') %></button>
         </form>
       </div>
@@ -362,13 +398,15 @@
             <h2><%= player.firstName %> <%= player.lastName %></h2>
             <p><%= player.team.fullName %></p>
             <div class="carousel">
-              <% player.pictures.forEach(function(picture) { %>
+              <% player.pictures.forEach(function(picture, index) { %>
               <img
                 src="<%= picture %>"
                 alt="Player Image"
-                class="carousel-image"
+                class="carousel-image <%= index === 0 ? 'active' : '' %>"
               />
               <% }); %>
+              <button class="prev">&#10094;</button>
+              <button class="next">&#10095;</button>
             </div>
             <div class="btns">
               <button class="editButton"><%= __('edit') %></button>
@@ -414,6 +452,34 @@
     </footer>
 
     <script>
+      document.querySelectorAll(".carousel").forEach(function (carousel) {
+        let index = 0;
+        const images = carousel.querySelectorAll(".carousel-image");
+
+        function showImage(n) {
+          images.forEach(function (image) {
+            image.style.display = "none";
+          });
+          if (n >= images.length) {
+            index = 0;
+          }
+          if (n < 0) {
+            index = images.length - 1;
+          }
+          images[index].style.display = "block";
+        }
+
+        showImage(index);
+
+        carousel.querySelector(".prev").addEventListener("click", function () {
+          showImage(--index);
+        });
+
+        carousel.querySelector(".next").addEventListener("click", function () {
+          showImage(++index);
+        });
+      });
+
       // Get the modal
       let modal = document.getElementById("myModal");
 

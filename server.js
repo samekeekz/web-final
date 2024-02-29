@@ -292,12 +292,12 @@ app.get("/admin/players", checkAuth, async (req, res) => {
 app.post("/admin/add", checkAuth, async (req, res) => {
 
     try {
-        const { firstName, lastName, team, picture1 } = req.body;
+        const { firstName, lastName, team, picture1, picture2, picture3 } = req.body;
         await Player.create({
             firstName,
             lastName,
             team: { fullName: team },
-            pictures: [picture1],
+            pictures: [picture1, picture2, picture3],
         });
         res.redirect("/admin/players");
     } catch (error) {
