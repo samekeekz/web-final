@@ -61,12 +61,12 @@ app.use((req, res, next) => {
 });
 
 // Redirect to signup page if user tries to access a protected route without logging in
-app.use((req, res, next) => {
-    if (!req.session.username && req.url !== '/authorization.html') {
-        return res.redirect("/authorization.html");
-    }
-    next();
-});
+// app.use((req, res, next) => {
+//     if (!req.session.username && req.url !== '/authorization.html') {
+//         return res.redirect("/authorization.html");
+//     }
+//     next();
+// });
 
 app.get("/", (req, res) => {
     req.session.username = null;
