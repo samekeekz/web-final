@@ -181,7 +181,7 @@ app.post('/getPlayerInfo', checkAuth, async (req, res) => {
         });
 
         if (!matchingPlayer) {
-            return res.render('main?lang=en', { playerData: null, isAdmin });
+            return res.render('main', { playerData: null, isAdmin });
         }
 
         try {

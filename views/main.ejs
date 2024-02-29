@@ -71,33 +71,6 @@
         margin: 0;
       }
 
-      .language-buttons {
-        position: absolute;
-        top: 60px;
-        right: 20px;
-        display: flex;
-        gap: 10px;
-      }
-
-      .language-button {
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      .language-button:not(.active):hover {
-        background-color: #0056b3;
-      }
-
-      .active {
-        background-color: #28a745;
-      }
-
       h1,
       h2 {
         text-align: center;
@@ -228,33 +201,10 @@
       </ul>
     </div>
 
-    <div class="language-buttons">
-      <button
-        class="language-button"
-        id="enButton"
-        onclick="changeLanguage('en')"
-      >
-        <%= __('english') %>
-      </button>
-      <button
-        class="language-button"
-        id="ruButton"
-        onclick="changeLanguage('ru')"
-      >
-        <%= __('russian') %>
-      </button>
-      <button
-        class="language-button"
-        id="kzButton"
-        onclick="changeLanguage('kz')"
-      >
-        <%= __('kazakh') %>
-      </button>
-    </div>
-
     <h1><%= __('basketballPlayerInfo') %></h1>
     <form action="/getPlayerInfo" method="post">
-      <label for="fullName">Enter Basketball Player Full Name:</label><br />
+      <label for="fullName"><%= __('enterBasketballPlayerFullname') %></label
+      ><br />
       <input
         type="text"
         id="fullName"
@@ -262,30 +212,32 @@
         placeholder="Enter Firstname and Lastname"
         required
       /><br />
-      <button type="submit">Get Info</button>
+      <button type="submit"><%= __('getInfo') %></button>
     </form>
 
     <% if(playerData) { %>
     <div class="player-info">
-      <h2>Player Information</h2>
-      <p><strong>First Name:</strong> <%= playerData.first_name %></p>
-      <p><strong>Last Name:</strong> <%= playerData.last_name %></p>
-      <p><strong>Position:</strong> <%= playerData.position %></p>
-      <p><strong>Height:</strong> <%= playerData.height %></p>
-      <p><strong>Weight:</strong> <%= playerData.weight %></p>
-      <p><strong>Country:</strong> <%= playerData.country %></p>
+      <h2><%= __('playerInfo') %></h2>
+      <p>
+        <strong><%= __('firstName') %>:</strong> <%= playerData.first_name %>
+      </p>
+      <p><strong><%= __('lastName') %>:</strong> <%= playerData.last_name %></p>
+      <p><strong><%= __('position') %>:</strong> <%= playerData.position %></p>
+      <p><strong><%= __('height') %>:</strong> <%= playerData.height %></p>
+      <p><strong><%= __('weight') %>:</strong> <%= playerData.weight %></p>
+      <p><strong><%= __('country') %>:</strong> <%= playerData.country %></p>
       <p class="team">
-        <strong>Team:</strong> <%= playerData.team.full_name %>
+        <strong><%= __('team') %>:</strong> <%= playerData.team.full_name %>
       </p>
     </div>
 
     <div class="team-info">
-      <button onclick="getTeamStats()">See additional info about team</button>
+      <button onclick="getTeamStats()"><%= __('additionalInfoTeam') %></button>
       <div id="teamStats"></div>
     </div>
     <% } else{ %>
     <div class="player-info">
-      <h2>There is no such player</h2>
+      <h2><%= __('noPlayer') %></h2>
     </div>
     <% } %>
 
@@ -294,21 +246,6 @@
     </footer>
 
     <script>
-      function changeLanguage(lang) {
-        const currentUrl = window.location.href;
-        const urlWithoutParams = currentUrl.split("?")[0];
-        const newUrl = `${urlWithoutParams}?lang=${lang}`;
-        window.location.href = newUrl;
-      }
-
-      const params = new URLSearchParams(window.location.search);
-      const activeLanguage = params.get("lang");
-
-      if (activeLanguage) {
-        const activeButton = document.getElementById(`${activeLanguage}Button`);
-        activeButton.classList.add("active");
-      }
-
       function displayTeamStats(data) {
         const teamStats = data.teamStatistics;
         const teamStatsDiv = document.getElementById("teamStats");

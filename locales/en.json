@@ -20,5 +20,10 @@
   "height": "Height",
   "weight": "Weight",
   "country": "Country",
-  "team": "Team"
+  "team": "Team",
+  "additionalInfoTeam": "Additional Info Team",
+  "noPlayer": "There is no such Player",
+  "enterBasketballPlayerFullname": "Enter Basketball Player Fullname",
+  "getInfo": "Get info",
+  "playerInfo": "Player Information"
 }

@@ -20,5 +20,10 @@
   "height": "Бойы",
   "weight": "Салмағы",
   "country": "Ел",
-  "team": "Команда"
+  "team": "Команда",
+  "additionalInfoTeam": "Командадағы қосымша ақпарат",
+  "noPlayer": "Ойыншы табылмады",
+  "enterBasketballPlayerFullname": "Баскетбол ойыншысының атын және тегін енгізіңіз",
+  "getInfo": "Ақпарат алу",
+  "playerInfo": "Ойыншы туралы ақпарат"
 }

@@ -20,5 +20,10 @@
   "height": "Рост",
   "weight": "Вес",
   "country": "Страна",
-  "team": "Команда"
+  "team": "Команда",
+  "additionalInfoTeam": "Дополнительная информация о команде",
+  "noPlayer": "Игрок не найден",
+  "enterBasketballPlayerFullname": "Введите полное имя игрока",
+  "getInfo": "Получить информацию",
+  "playerInfo": "Информация об игроке"
 }
