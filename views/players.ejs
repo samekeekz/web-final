@@ -9,7 +9,6 @@
     />
     <title>Admin Page</title>
     <style>
-      /* CSS styles for the admin page */
       body {
         font-family: "Poppins", sans-serif;
         margin: 0;
@@ -127,7 +126,7 @@
         align-items: center;
         background-color: #f9f9f9;
         margin-bottom: 20px;
-        padding: 20px;
+        padding: 10px;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
@@ -145,49 +144,74 @@
       }
 
       .carousel {
-        display: flex;
-        overflow-x: auto;
-        margin-bottom: 15px;
+        position: relative;
+        width: 100%;
+        height: 140px;
+        overflow: hidden;
       }
 
-      .carousel img {
-        width: 200px;
-        height: auto;
+      .carousel-image {
+        display: none;
+        width: 100%;
         border-radius: 10px;
       }
 
-      .button-container {
-        text-align: right;
+      .active {
+        display: block;
       }
 
-      button:active {
-        transform: scale(0.94);
-        transition: all 0.2s ease-in-out;
+      .btns {
+        text-align: center;
+        margin-top: 10px;
       }
-      button.editButton,
-      button.deleteButton {
-        padding: 8px 15px;
-        margin-right: 10px;
-        border: none;
-        border-radius: 5px;
+
+      .prev,
+      .next {
         cursor: pointer;
-        font-size: 14px;
-        transition: all 0.2s ease-in-out;
-      }
-
-      button.editButton {
-        background-color: #28a745;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
         color: #fff;
+        border: none;
+        outline: none;
+        z-index: 1;
       }
 
-      button.deleteButton {
-        background-color: #dc3545;
+      .prev {
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
         color: #fff;
+        border: none;
+        outline: none;
+        z-index: 1;
       }
 
-      button.editButton:hover,
-      button.deleteButton:hover {
-        opacity: 0.8;
+      .prev:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      .next {
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: none;
+        outline: none;
+        z-index: 1;
+      }
+
+      .next:hover {
+        background-color: rgba(0, 0, 0, 0.8);
       }
 
       .list {
@@ -336,13 +360,15 @@
             <h2><%= player.firstName %> <%= player.lastName %></h2>
             <p><%= player.team.fullName %></p>
             <div class="carousel">
-              <% player.pictures.forEach(function(picture) { %>
+              <% player.pictures.forEach(function(picture, index) { %>
               <img
                 src="<%= picture %>"
                 alt="Player Image"
-                class="carousel-image"
+                class="carousel-image <%= index === 0 ? 'active' : '' %>"
               />
               <% }); %>
+              <button class="prev">&#10094;</button>
+              <button class="next">&#10095;</button>
             </div>
           </div>
           <% }); %>
@@ -371,6 +397,34 @@
         const activeButton = document.getElementById(`${activeLanguage}Button`);
         activeButton.classList.add("active");
       }
+
+      document.querySelectorAll(".carousel").forEach(function (carousel) {
+        let index = 0;
+        const images = carousel.querySelectorAll(".carousel-image");
+
+        function showImage(n) {
+          images.forEach(function (image) {
+            image.style.display = "none";
+          });
+          if (n >= images.length) {
+            index = 0;
+          }
+          if (n < 0) {
+            index = images.length - 1;
+          }
+          images[index].style.display = "block";
+        }
+
+        showImage(index);
+
+        carousel.querySelector(".prev").addEventListener("click", function () {
+          showImage(--index);
+        });
+
+        carousel.querySelector(".next").addEventListener("click", function () {
+          showImage(++index);
+        });
+      });
     </script>
   </body>
 </html>
