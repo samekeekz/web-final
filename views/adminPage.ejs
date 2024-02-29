@@ -179,11 +179,38 @@
       }
 
       .prev {
-        left: 0;
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: none;
+        outline: none;
+        z-index: 1;
+      }
+
+      .prev:hover {
+        background-color: rgba(0, 0, 0, 0.8);
       }
 
       .next {
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
         right: 0;
+        transform: translateY(-50%);
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: none;
+        outline: none;
+        z-index: 1;
+      }
+
+      .next:hover {
+        background-color: rgba(0, 0, 0, 0.8);
       }
 
       .button-container {
@@ -439,8 +466,20 @@
         <input type="text" id="modalTeam" placeholder="Team" required />
         <input
           type="text"
-          id="modalPicture"
-          placeholder="Picture URL"
+          id="modalPicture1"
+          placeholder="Picture 1 URL"
+          required
+        />
+        <input
+          type="text"
+          id="modalPicture2"
+          placeholder="Picture 2 URL"
+          required
+        />
+        <input
+          type="text"
+          id="modalPicture3"
+          placeholder="Picture 3 URL"
           required
         />
         <button onclick="updatePlayer()"><%= __('save') %></button>
@@ -511,7 +550,12 @@
           document.getElementById("modalFirstName").value = previousFirstName;
           document.getElementById("modalLastName").value = previousLastName;
           document.getElementById("modalTeam").value = team;
-          document.getElementById("modalPicture").value = pictures.join(",");
+
+          // Populate the modal picture fields with current data
+          for (let i = 0; i < pictures.length; i++) {
+            document.getElementById("modalPicture" + (i + 1)).value =
+              pictures[i];
+          }
         };
 
         deleteButton[i].onclick = function () {
@@ -567,7 +611,9 @@
         let firstName = document.getElementById("modalFirstName").value;
         let lastName = document.getElementById("modalLastName").value;
         let team = document.getElementById("modalTeam").value;
-        let picture1 = document.getElementById("modalPicture").value;
+        let picture1 = document.getElementById("modalPicture1").value;
+        let picture2 = document.getElementById("modalPicture2").value;
+        let picture3 = document.getElementById("modalPicture3").value;
 
         // Create the payload object
         let payload = {
@@ -576,7 +622,7 @@
           firstName: firstName,
           lastName: lastName,
           team: team,
-          picture1: picture1,
+          pictures: [picture1, picture2, picture3],
         };
 
         // Send HTTP POST request to server

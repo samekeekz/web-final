@@ -309,8 +309,8 @@ app.post("/admin/add", checkAuth, async (req, res) => {
 app.post('/admin/update', checkAuth, async (req, res) => {
     const { isAdmin } = req.session;
     try {
-        const { previousFirstName, previousLastName, firstName, lastName, team, picture1 } = req.body;
-        console.log(previousFirstName, previousLastName, firstName, lastName, team, picture1);
+        const { previousFirstName, previousLastName, firstName, lastName, team, pictures } = req.body;
+        console.log(previousFirstName, previousLastName, firstName, lastName, team, pictures);
         const player = await Player.findOne({
             firstName: previousFirstName,
             lastName: previousLastName
@@ -324,7 +324,7 @@ app.post('/admin/update', checkAuth, async (req, res) => {
         player.firstName = firstName;
         player.lastName = lastName;
         player.team.fullName = team;
-        player.pictures = [picture1];
+        player.pictures = pictures;
 
         // Save the updated player data
         await player.save();
